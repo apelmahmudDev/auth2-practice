@@ -19,6 +19,7 @@ function App() {
     <UserContext.Provider value={[loggedInUser, setLoggedInUser]}>
       <Router>
         <img style={{height:'50px', borderRadius:'100%', marginTop:'5px'}} src={loggedInUser.photo} alt=""/>
+        <h2>{loggedInUser.name}</h2>
         <h1 style={{color:'orange'}}>WELOCME: {loggedInUser.email}</h1>
         <Header />
         <Switch>

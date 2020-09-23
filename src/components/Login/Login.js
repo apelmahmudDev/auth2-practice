@@ -56,7 +56,7 @@ const Login = () => {
             photo: '',
         }
         setUser(newUserInfo);
-        setLoggedInUser(newUserInfo)
+        setLoggedInUser(newUserInfo);
         }).catch(err => {
         // An error happened.
         console.log(err.message)
@@ -89,7 +89,9 @@ const Login = () => {
                 newUserInfo.error = '';
                 newUserInfo.success = true;
                 setUser(newUserInfo);
+                updateUser(user.name, user.photo);
                 setLoggedInUser(newUserInfo);
+                history.replace(from);
             })
             .catch(err => {
                 const newUserInfo = {...user};
@@ -109,6 +111,7 @@ const Login = () => {
                 newUserInfo.success = true;
                 setUser(newUserInfo);
                 setLoggedInUser(newUserInfo);
+                history.replace(from);
             })
             .catch(err => {
                 const newUserInfo = {...user};
@@ -119,6 +122,21 @@ const Login = () => {
             })
             }
         e.preventDefault();
+    }
+
+    //UPDATE NAME AND PHOTP
+    const updateUser = (name, photo) => {
+        const user = firebase.auth().currentUser;
+        user.updateProfile({
+            displayName: name,
+            photoURL: photo
+        })
+        .then(res => {
+            console.log('User name update successfully')
+        })
+        .catch(err => {
+            console.log('User name update failed')
+        })
     }
 
     return (
@@ -145,7 +163,8 @@ const Login = () => {
                 <input onBlur={handleBlur} name="email" type="email" placeholder="Enter your email" required/>
                 <input onBlur={handleBlur} name="password" type="password" placeholder="Your password" required/>
                 <input onBlur={handleBlur} name="photo" type="file" />
-                <input type="submit"/>
+                {loggedInUser.isSignedIn ? <Button onClick={handleGoogleSignOut} color="primary" variant="contained">Sign Out</Button> :
+                 <input type="submit"/>}
 
             </form>
             {/* SHOW LOGIN SUCCESS OR ERROR MESSAGE */}
