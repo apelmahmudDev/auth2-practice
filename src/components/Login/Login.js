@@ -15,12 +15,15 @@ const Login = () => {
     const location = useLocation();
     let { from } = location.state || { from: { pathname: "/" } };
 
-    const [loggedInUser, setLoggedInUser] = useContext(UserContext)
+    const [loggedInUser, setLoggedInUser] = useContext(UserContext);
+    const [newUser, setNewUser] = useState(false);
     const [user, setUser] = useState({
         isSignedIn: false,
         name: '',
         email: '',
-        photo: ''
+        photo: '',
+        error: '',
+        success: false
     })
     //GOOGLE SIGN IN
     const provider = new firebase.auth.GoogleAuthProvider();
@@ -50,7 +53,7 @@ const Login = () => {
             isSignedIn: false,
             name: '',
             email: '',
-            photo: ''
+            photo: '',
         }
         setUser(newUserInfo);
         setLoggedInUser(newUserInfo)
@@ -61,17 +64,63 @@ const Login = () => {
     } 
     //CUSTOM LOGIN FORM VALIDATION
     const handleBlur = (e) => {
+        let isFieldValid = true;
         if(e.target.name === 'email'){
-            const isValidEmail = /(.+)@(.+){2,}\.(.+){2,}/.test(e.target.value);
-            console.log(isValidEmail)
+            isFieldValid = /(.+)@(.+){2,}\.(.+){2,}/.test(e.target.value);
         }
         if(e.target.name === 'password'){
             const isValidPassword = e.target.value.length > 6;
             const hasNumber = /\d/g.test(e.target.value);
-            console.log(isValidPassword && hasNumber)
+            isFieldValid = isValidPassword && hasNumber;
+        }
+        if(isFieldValid){
+            const newUserInfo = {...user};
+            newUserInfo[e.target.name] = e.target.value;
+            setUser(newUserInfo);
         }
     }
-    
+    //CUSTOM lOGIN FORM SUBMIT
+    const handleSubmit = (e) => {
+        if(newUser && user.email && user.password){
+            firebase.auth().createUserWithEmailAndPassword(user.email, user.password)
+                .then(res => {
+                const newUserInfo = {...user};
+                newUserInfo.isSignedIn = true;
+                newUserInfo.error = '';
+                newUserInfo.success = true;
+                setUser(newUserInfo);
+                setLoggedInUser(newUserInfo);
+            })
+            .catch(err => {
+                const newUserInfo = {...user};
+                newUserInfo.error = err.message;
+                newUserInfo.success = false;
+                setUser(newUserInfo)
+                setLoggedInUser(newUserInfo)
+            })
+        }
+
+        if(!newUser && user.email && user.password){
+            firebase.auth().signInWithEmailAndPassword(user.email, user.password)
+                .then(res => {
+                const newUserInfo = {...user};
+                newUserInfo.isSignedIn = true;
+                newUserInfo.error = '';
+                newUserInfo.success = true;
+                setUser(newUserInfo);
+                setLoggedInUser(newUserInfo);
+            })
+            .catch(err => {
+                const newUserInfo = {...user};
+                newUserInfo.error = err.message;
+                newUserInfo.success = false;
+                setUser(newUserInfo)
+                setLoggedInUser(newUserInfo)
+            })
+            }
+        e.preventDefault();
+    }
+
     return (
         <div style={{textAlign: 'center'}}>
             <h1>Firebase Authentication Start here....🚀</h1>
@@ -87,11 +136,21 @@ const Login = () => {
                 <Button onClick={handleSignWithGoogle} color="primary" variant="contained">Sign with Google</Button>
             }
             {/* CUSTOM LOGIN FORM  */}
-            <form className="login__form">
+            <form className="login__form" onSubmit={handleSubmit}>
+                <div display="flex" alignItems="center">
+                    <input type="checkbox" style={{marginRight:'5px'}} name="newUser" onClick={() => setNewUser(!newUser)}/>
+                    <label htmlFor="newUser">Sign in new user</label>
+                </div>
+                {newUser && <input onBlur={handleBlur} name="name" type="text" placeholder="Enter your name" required/>}
                 <input onBlur={handleBlur} name="email" type="email" placeholder="Enter your email" required/>
                 <input onBlur={handleBlur} name="password" type="password" placeholder="Your password" required/>
+                <input onBlur={handleBlur} name="photo" type="file" />
                 <input type="submit"/>
+
             </form>
+            {/* SHOW LOGIN SUCCESS OR ERROR MESSAGE */}
+                {user.success ? <p style={{color:'green', fontWeight:'bold'}}>User {newUser ? 'created' : 'logged in'} successfully</p> :
+                <p style={{color:'red', fontWeight:'bold'}}>{user.error}</p>}
         </div>
     );
 };
