@@ -1,0 +1,14 @@
+.nav {
+    background: lightGray;
+    height: 45px;
+    text-align: center;
+}
+
+.nav a {
+    font-size: 18px;
+    line-height: 45px;
+    text-decoration: none;
+    color: purple;
+    padding: 5px;
+    margin-right: 20px;
+}
