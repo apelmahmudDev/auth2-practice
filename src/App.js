@@ -10,6 +10,7 @@ import {
 import Login from './components/Login/Login';
 import Shipment from './components/Shipment/Shipment';
 import PrivateRoute from './components/PrivateRoute/PrivateRoute';
+import SetUserPhoto from './components/SetUserPhoto/SetUserPhoto';
 
 export const UserContext  = createContext();
 
@@ -31,6 +32,9 @@ function App() {
           </Route>
           <Route path="/login">
             <Login />
+          </Route>
+          <Route path="/setPhoto">
+            <SetUserPhoto />
           </Route>
           <PrivateRoute>
             <Shipment />

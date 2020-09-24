@@ -89,7 +89,7 @@ const Login = () => {
                 newUserInfo.error = '';
                 newUserInfo.success = true;
                 setUser(newUserInfo);
-                updateUser(user.name, user.photo);
+                updateUser(user.name);
                 setLoggedInUser(newUserInfo);
                 history.replace(from);
             })
@@ -125,11 +125,10 @@ const Login = () => {
     }
 
     //UPDATE NAME AND PHOTP
-    const updateUser = (name, photo) => {
+    const updateUser = (name) => {
         const user = firebase.auth().currentUser;
         user.updateProfile({
             displayName: name,
-            photoURL: photo
         })
         .then(res => {
             console.log('User name update successfully')
@@ -162,7 +161,6 @@ const Login = () => {
                 {newUser && <input onBlur={handleBlur} name="name" type="text" placeholder="Enter your name" required/>}
                 <input onBlur={handleBlur} name="email" type="email" placeholder="Enter your email" required/>
                 <input onBlur={handleBlur} name="password" type="password" placeholder="Your password" required/>
-                <input onBlur={handleBlur} name="photo" type="file" />
                 {loggedInUser.isSignedIn ? <Button onClick={handleGoogleSignOut} color="primary" variant="contained">Sign Out</Button> :
                  <input type="submit"/>}
 
