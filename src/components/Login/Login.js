@@ -6,6 +6,7 @@ import { Button } from '@material-ui/core';
 import { UserContext } from '../../App';
 import './Login.css';
 import { useHistory, useLocation } from 'react-router-dom';
+import FacebookIcon from '@material-ui/icons/Facebook';
 
 firebase.initializeApp(firebaseConfig);
 
@@ -62,6 +63,28 @@ const Login = () => {
         console.log(err.message)
       });
     } 
+
+    //SIGN IN WITH FACEBOOK
+    const handleFacebookSignIn = () => {
+        var fbProvider = new firebase.auth.FacebookAuthProvider();
+        firebase.auth().signInWithPopup(fbProvider)
+        .then(res => {
+            const {displayName, email, photoURL} = res.user;
+                const newUserInfo = {
+                    isSignedIn: true,
+                    name: displayName,
+                    email: email,
+                    photo: photoURL
+                }
+                setUser(newUserInfo);
+                setLoggedInUser(newUserInfo);
+                history.replace(from);
+        })
+        .catch(err =>{
+            console.log(err.message);
+        });
+    }
+
     //CUSTOM LOGIN FORM VALIDATION
     const handleBlur = (e) => {
         let isFieldValid = true;
@@ -152,6 +175,8 @@ const Login = () => {
                 loggedInUser.isSignedIn ? <Button onClick={handleGoogleSignOut} color="primary" variant="contained">Google Sign Out</Button>:
                 <Button onClick={handleSignWithGoogle} color="primary" variant="contained">Sign with Google</Button>
             }
+            {/* SIGN WITH FACEBOOK */}
+            <Button onClick={handleFacebookSignIn} color="secondary" variant="contained"><FacebookIcon /> Sign in with Facebook</Button>
             {/* CUSTOM LOGIN FORM  */}
             <form className="login__form" onSubmit={handleSubmit}>
                 <div display="flex" alignItems="center">

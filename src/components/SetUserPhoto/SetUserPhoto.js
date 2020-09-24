@@ -5,6 +5,8 @@ const SetUserPhoto = () => {
     const [loggedInUser, setLoggedInUser] = useContext(UserContext);
     const [userPhoto, setUserPhoto] = useState(null);
 
+    console.log(userPhoto);
+    
     const handleChange = (e) => {
         const fileUrl = URL.createObjectURL(e.target.files[0]);
         const newUserInfo = {...loggedInUser};
