@@ -1,12 +1,12 @@
 import React, { useContext, useState } from 'react';
 import * as firebase from "firebase/app";
 import "firebase/auth";
-import firebaseConfig from './firebase.config';
 import { Button } from '@material-ui/core';
 import { UserContext } from '../../App';
 import './Login.css';
 import { useHistory, useLocation } from 'react-router-dom';
 import FacebookIcon from '@material-ui/icons/Facebook';
+import firebaseConfig from '../../firebase.config';
 
 firebase.initializeApp(firebaseConfig);
 
